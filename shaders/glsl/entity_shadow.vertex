@@ -1,0 +1,19 @@
+#version 100
+
+precision highp float;
+
+attribute vec3 POSITION;
+attribute vec3 NORMAL;
+attribute vec4 COLOR;
+
+varying vec4 vColor;
+varying vec3 vNormal;
+
+uniform mat4 PROJECTION;
+uniform mat4 MODELVIEW;
+
+void main() {
+    gl_Position = PROJECTION * MODELVIEW * vec4(POSITION, 1.0);
+    vColor = COLOR;
+    vNormal = normalize(NORMAL);
+}

@@ -1,0 +1,44 @@
+#version 100
+
+precision highp float;
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vPosition;
+
+uniform sampler2D TEXTURE_0;
+uniform float TIME;
+uniform vec3 FOG_COLOR;
+
+// Perlin-like noise
+float noise(vec2 p) {
+    vec2 ip = floor(p);
+    vec2 u = fract(p);
+    u = u * u * (3.0 - 2.0 * u);
+    
+    float n00 = fract(sin(dot(ip, vec2(12.9898, 78.233))) * 43758.5453);
+    float n10 = fract(sin(dot(ip + vec2(1.0, 0.0), vec2(12.9898, 78.233))) * 43758.5453);
+    float n01 = fract(sin(dot(ip + vec2(0.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);
+    float n11 = fract(sin(dot(ip + vec2(1.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);
+    
+    float nx0 = mix(n00, n10, u.x);
+    float nx1 = mix(n01, n11, u.x);
+    return mix(nx0, nx1, u.y);
+}
+
+void main() {
+    // Generate cloud pattern similar to Complementary shader
+    vec2 cloudCoord = vTexCoord + TIME * 0.05;
+    float cloud = noise(cloudCoord * 3.0) * 0.6;
+    cloud += noise(cloudCoord * 6.0) * 0.3;
+    cloud += noise(cloudCoord * 12.0) * 0.1;
+    cloud = smoothstep(0.3, 0.7, cloud);
+    
+    // Cloud color (white with soft edges)
+    vec3 cloudColor = vec3(1.0, 0.98, 0.95) * cloud;
+    
+    // Adjust opacity
+    float alpha = cloud * 0.8;
+    
+    gl_FragColor = vec4(cloudColor, alpha);
+}

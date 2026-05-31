@@ -1,0 +1,45 @@
+#version 100
+
+precision highp float;
+
+attribute vec3 POSITION;
+attribute vec3 NORMAL;
+attribute vec4 COLOR;
+attribute vec2 TEXCOORD_0;
+
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vWorldPos;
+varying float vWaveHeight;
+
+uniform mat4 PROJECTION;
+uniform mat4 MODELVIEW;
+uniform mat4 WORLD;
+uniform float TIME;
+
+// Wave animation
+float wave(vec3 pos, float time) {
+    float wave1 = sin(pos.x * 0.5 + time * 2.0) * 0.1;
+    float wave2 = sin(pos.z * 0.3 + time * 1.5) * 0.08;
+    float wave3 = cos((pos.x + pos.z) * 0.4 + time * 1.8) * 0.06;
+    return wave1 + wave2 + wave3;
+}
+
+void main() {
+    vec3 pos = POSITION;
+    
+    // Apply wave animation
+    float waveHeight = wave(pos, TIME);
+    pos.y += waveHeight;
+    vWaveHeight = waveHeight;
+    
+    gl_Position = PROJECTION * MODELVIEW * vec4(pos, 1.0);
+    
+    vPosition = pos;
+    vNormal = normalize(NORMAL);
+    vColor = COLOR;
+    vTexCoord = TEXCOORD_0 + vec2(TIME * 0.1, TIME * 0.1);
+    vWorldPos = (WORLD * vec4(pos, 1.0)).xyz;
+}

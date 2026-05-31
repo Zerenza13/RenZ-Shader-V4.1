@@ -1,0 +1,27 @@
+#version 100
+
+precision highp float;
+
+varying vec4 vColor;
+varying vec3 vPosition;
+
+uniform float TIME;
+
+void main() {
+    // Circular sun shape with orange color
+    vec3 center = vec3(0.0, 0.0, 0.0);
+    float dist = length(vPosition.xy - center.xy);
+    
+    // Create circular gradient
+    float circle = smoothstep(0.5, 0.0, dist);
+    
+    // Orange sun color
+    vec3 sunColor = vec3(1.0, 0.7, 0.2) * circle;
+    
+    // Add glow
+    vec3 glow = vec3(1.0, 0.8, 0.3) * 0.5 * (1.0 - dist * 2.0);
+    
+    sunColor += glow;
+    
+    gl_FragColor = vec4(sunColor, circle);
+}

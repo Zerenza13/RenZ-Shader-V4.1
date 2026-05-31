@@ -1,0 +1,29 @@
+#version 100
+
+precision highp float;
+
+attribute vec3 POSITION;
+attribute vec4 COLOR;
+attribute vec2 TEXCOORD_0;
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vPosition;
+
+uniform mat4 PROJECTION;
+uniform mat4 MODELVIEW;
+uniform float TIME;
+
+void main() {
+    vec3 pos = POSITION;
+    
+    // Cloud movement
+    pos.x += TIME * 0.5;
+    pos.x = mod(pos.x, 512.0) - 256.0;
+    
+    gl_Position = PROJECTION * MODELVIEW * vec4(pos, 1.0);
+    
+    vColor = COLOR;
+    vTexCoord = TEXCOORD_0 + vec2(TIME * 0.1, 0.0);
+    vPosition = pos;
+}

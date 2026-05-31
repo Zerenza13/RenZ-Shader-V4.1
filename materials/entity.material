@@ -1,0 +1,60 @@
+{
+  "format_version": "1.0.0",
+  
+  "materials": {
+    "entity_opaque": {
+      "vertexShader": "shaders/glsl/renderchunk.vertex",
+      "fragmentShader": "shaders/glsl/renderchunk.fragment",
+      "alphaTest": true,
+      "alphaTestValue": 0.5
+    },
+    
+    "entity_water": {
+      "vertexShader": "shaders/glsl/water.vertex",
+      "fragmentShader": "shaders/glsl/water.fragment",
+      "blendSrc": "srcAlpha",
+      "blendDst": "oneMinusSrcAlpha"
+    },
+    
+    "entity_shadow": {
+      "vertexShader": "shaders/glsl/entity_shadow.vertex",
+      "fragmentShader": "shaders/glsl/entity_shadow.fragment",
+      "depthBias": 0.0001
+    },
+    
+    "torch_light": {
+      "vertexShader": "shaders/glsl/torch_light.vertex",
+      "fragmentShader": "shaders/glsl/torch_light.fragment",
+      "blendSrc": "one",
+      "blendDst": "one"
+    },
+    
+    "cloud": {
+      "vertexShader": "shaders/glsl/cloud.vertex",
+      "fragmentShader": "shaders/glsl/cloud.fragment",
+      "blendSrc": "srcAlpha",
+      "blendDst": "oneMinusSrcAlpha"
+    },
+    
+    "sun": {
+      "vertexShader": "shaders/glsl/sun.vertex",
+      "fragmentShader": "shaders/glsl/sun.fragment",
+      "blendSrc": "one",
+      "blendDst": "one"
+    },
+    
+    "particle_splash": {
+      "vertexShader": "shaders/glsl/particle.vertex",
+      "fragmentShader": "shaders/glsl/particle.fragment",
+      "blendSrc": "srcAlpha",
+      "blendDst": "oneMinusSrcAlpha"
+    },
+    
+    "rainbow": {
+      "vertexShader": "shaders/glsl/rain_rainbow.vertex",
+      "fragmentShader": "shaders/glsl/rain_rainbow.fragment",
+      "blendSrc": "srcAlpha",
+      "blendDst": "oneMinusSrcAlpha"
+    }
+  }
+}

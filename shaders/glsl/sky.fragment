@@ -1,0 +1,60 @@
+#version 100
+
+precision highp float;
+
+varying vec4 vColor;
+varying vec3 vPosition;
+
+uniform float TIME;
+uniform vec3 FOG_COLOR;
+
+// Pseudo-random function
+float rand(vec2 n) {
+    return fract(sin(dot(n, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+// Aurora effect
+vec3 aurora(vec3 pos, float time) {
+    vec3 auroraColor = vec3(0.0);
+    
+    // Green aurora
+    float wave1 = sin(pos.x * 0.5 + time * 0.5) * 0.5 + 0.5;
+    auroraColor += vec3(0.0, 0.8, 0.4) * wave1 * 0.6;
+    
+    // Purple aurora
+    float wave2 = sin(pos.x * 0.3 + time * 0.3 + 3.14) * 0.5 + 0.5;
+    auroraColor += vec3(0.8, 0.0, 0.6) * wave2 * 0.4;
+    
+    // Cyan aurora
+    float wave3 = sin(pos.x * 0.4 + time * 0.4 + 1.57) * 0.5 + 0.5;
+    auroraColor += vec3(0.0, 0.8, 0.8) * wave3 * 0.3;
+    
+    return auroraColor;
+}
+
+// Star effect
+float stars(vec3 pos, float time) {
+    vec3 starPos = pos * 100.0;
+    float star = rand(floor(starPos.xy));
+    
+    if (star > 0.98) {
+        float twinkle = sin(time * 3.0 + star * 6.28) * 0.5 + 0.5;
+        return twinkle * 0.8;
+    }
+    return 0.0;
+}
+
+void main() {
+    vec3 finalColor = vColor.rgb;
+    
+    // Add aurora in night sky (when FOG_COLOR is dark)
+    float nightness = 1.0 - dot(FOG_COLOR, vec3(0.33));
+    vec3 auroraEffect = aurora(vPosition, TIME) * nightness * 0.7;
+    
+    // Add stars in night
+    float starEffect = stars(vPosition, TIME) * nightness * 0.5;
+    
+    finalColor = mix(finalColor, finalColor + auroraEffect + vec3(starEffect), nightness * 0.6);
+    
+    gl_FragColor = vec4(finalColor, vColor.a);
+}

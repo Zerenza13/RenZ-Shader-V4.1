@@ -1,0 +1,35 @@
+#version 100
+
+precision highp float;
+
+attribute vec3 POSITION;
+attribute vec3 NORMAL;
+attribute vec4 COLOR;
+attribute vec2 TEXCOORD_0;
+
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vWorldPos;
+varying float vLightIntensity;
+
+uniform mat4 PROJECTION;
+uniform mat4 MODELVIEW;
+uniform mat4 WORLD;
+uniform vec3 VIEW_POS;
+
+void main() {
+    gl_Position = PROJECTION * MODELVIEW * vec4(POSITION, 1.0);
+    
+    vPosition = POSITION;
+    vNormal = normalize(NORMAL);
+    vColor = COLOR;
+    vTexCoord = TEXCOORD_0;
+    
+    vWorldPos = (WORLD * vec4(POSITION, 1.0)).xyz;
+    
+    // Calculate light intensity based on normal
+    float lightDot = max(dot(normalize(NORMAL), vec3(0.57, 0.57, 0.57)), 0.0);
+    vLightIntensity = mix(0.5, 1.0, lightDot);
+}

@@ -1,0 +1,25 @@
+#version 100
+
+precision highp float;
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+
+uniform sampler2D TEXTURE_0;
+uniform float TIME;
+
+void main() {
+    vec4 texColor = texture2D(TEXTURE_0, vTexCoord);
+    
+    // Splash particle effect - white/blue particles
+    vec3 particleColor = mix(
+        vec3(0.8, 0.9, 1.0),  // Blue
+        vec3(1.0, 1.0, 1.0),  // White
+        vTexCoord.x
+    );
+    
+    // Fade out particle
+    float alpha = vColor.a * (1.0 - length(vTexCoord - 0.5) * 2.0);
+    
+    gl_FragColor = vec4(particleColor * vColor.rgb, alpha * texColor.a);
+}

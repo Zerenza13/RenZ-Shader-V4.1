@@ -1,0 +1,50 @@
+#version 100
+
+precision highp float;
+
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vWorldPos;
+varying float vWaveHeight;
+
+uniform sampler2D TEXTURE_0;
+uniform sampler2D TEXTURE_1;
+uniform vec3 FOG_COLOR;
+uniform float TIME;
+uniform vec3 VIEW_POS;
+
+void main() {
+    // Water gradient colors: green to blue
+    vec3 waterColorShallow = vec3(0.2, 0.7, 0.5);
+    vec3 waterColorDeep = vec3(0.1, 0.4, 0.8);
+    
+    // Depth-based color blending
+    float depth = length(vWorldPos - VIEW_POS);
+    depth = clamp(depth / 50.0, 0.0, 1.0);
+    
+    vec3 waterColor = mix(waterColorShallow, waterColorDeep, depth);
+    
+    // Fresnel effect (reflections at angles)
+    vec3 viewDir = normalize(VIEW_POS - vWorldPos);
+    float fresnel = pow(1.0 - dot(viewDir, vNormal), 3.0);
+    
+    // Light reflection
+    vec3 sunDir = normalize(vec3(0.57, 0.707, 0.57));
+    float specular = pow(max(dot(viewDir, reflect(-sunDir, vNormal)), 0.0), 16.0);
+    
+    // Wave distortion effect
+    vec2 distortion = vTexCoord + vec2(sin(TIME * 2.0) * 0.05, cos(TIME * 1.5) * 0.05);
+    vec4 texColor = texture2D(TEXTURE_0, distortion);
+    
+    // Combine effects
+    vec3 finalColor = waterColor;
+    finalColor += vec3(0.3, 0.4, 0.5) * fresnel; // Reflection
+    finalColor += vec3(1.0, 0.95, 0.8) * specular * 0.8; // Sun reflection
+    
+    // Transparency with depth
+    float alpha = mix(0.7, 0.9, depth);
+    
+    gl_FragColor = vec4(finalColor, alpha);
+}
